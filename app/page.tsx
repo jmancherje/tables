@@ -24,8 +24,8 @@ export default function Home() {
   }, [debouncedSearch]);
 
   return (
-    <main>
-      <h1>Hi</h1>
+    <main style={{ padding: "20px" }}>
+      <h1>Hi Alex</h1>
       <p>Beautiful</p>
       <input
         value={search}
