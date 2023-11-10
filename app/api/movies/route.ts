@@ -2,7 +2,9 @@ import fs from "fs/promises";
 import path from "path";
 
 export async function GET() {
-  const data = await fs.readFile("./data/moviesByHref.json");
+  const data = await fs.readFile(
+    path.resolve("./public", "data/moviesByHref.json")
+  );
 
   const moviesByHref = JSON.parse(data.toString());
   const hrefs = Object.keys(moviesByHref);
