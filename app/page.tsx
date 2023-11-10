@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: "20px" }}>
-      <h1>Hi Alex</h1>
+      <h1>Hi Joey</h1>
       <p>Beautiful</p>
       <input
         value={search}
