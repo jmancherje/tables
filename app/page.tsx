@@ -9,7 +9,7 @@ async function fetchMovieSuggestions(search: string) {
 
 export default function Home() {
   const [search, setSearch] = useState("");
-  const [rows, setRows] = useState([]);
+  const [movies, setRows] = useState<MovieWithRawInfo[]>([]);
 
   const debouncedSearch = useDebouncedValue(search);
 
@@ -32,14 +32,14 @@ export default function Home() {
         onChange={(e) => setSearch(e.target.value)}
         placeholder="search"
       />
-      {rows.map((row) => (
-        <SuggestionRow key={row.href} movie={row} />
+      {movies.map((movie) => (
+        <SuggestionRow key={movie.href} movie={movie} />
       ))}
     </main>
   );
 }
 
-function SuggestionRow({ movie }) {
+function SuggestionRow({ movie }: { movie: MovieWithRawInfo }) {
   return (
     <div style={{ display: "flex" }}>
       <Image alt={movie.name} src={movie.images[0]} width="60" height="60" />
@@ -51,7 +51,7 @@ function SuggestionRow({ movie }) {
   );
 }
 
-export function useDebouncedValue(value: string, delay = 250): string {
+function useDebouncedValue(value: string, delay = 250): string {
   // State and setters for debounced value
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(

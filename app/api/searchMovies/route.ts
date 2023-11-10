@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     );
     const movies = filtered.map(
       (movie: [string, string]) => moviesByHref[movie[1]]
-    );
+    ) as MovieWithRawInfo[];
     return Response.json({ data: movies.map((movie) => movie) });
   } catch (error) {
     return Response.error();
