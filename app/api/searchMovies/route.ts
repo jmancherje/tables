@@ -1,8 +1,10 @@
 import fs from "fs/promises";
 
 export async function GET(request: Request) {
-  const rawSortedNames = await fs.readFile("./data/sortedMovieNames.json");
-  const rawMoviesByHref = await fs.readFile("./data/moviesByHref.json");
+  const rawSortedNames = await fs.readFile(
+    "./public/data/sortedMovieNames.json"
+  );
+  const rawMoviesByHref = await fs.readFile("./public/data/moviesByHref.json");
 
   const { searchParams } = new URL(request.url);
   console.log(searchParams, request.url);
