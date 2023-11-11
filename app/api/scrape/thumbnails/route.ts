@@ -16,7 +16,6 @@ export async function GET() {
     const moviesByHrefWithThumbnail = JSON.parse(
       rawMoviesByHrefWithThumbnails.toString()
     );
-    console.log("got here");
 
     const allHrefs = Object.keys(moviesByHref);
     const hrefs = allHrefs.filter(
