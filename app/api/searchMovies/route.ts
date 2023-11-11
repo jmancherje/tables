@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   );
 
   const { searchParams } = new URL(request.url);
-  console.log(searchParams, request.url);
+
   const search = searchParams.get("search");
   if (!search || search.length < 3) {
     return Response.json({ data: [] });
