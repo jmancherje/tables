@@ -1,6 +1,7 @@
 declare interface Critic {
   name: string;
   href: string; // Unique
+  movies: string[];
 }
 
 // Should be reference to BaseMovie and a score, but was built before
