@@ -4,6 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 
 export async function GET() {
+  return Response.json({ success: true });
   try {
     const rawMoviesByHref = await fs.readFile(
       path.resolve("./public", "data/moviesByHref.json")
