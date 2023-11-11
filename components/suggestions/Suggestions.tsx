@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 async function getSuggestions(): Promise<{ suggestions: MovieWithRawInfo[] }> {
   const res = await fetch("/api/movieSuggestions");
@@ -8,7 +8,7 @@ async function getSuggestions(): Promise<{ suggestions: MovieWithRawInfo[] }> {
 }
 
 type Opinion = "like" | "dislike";
-type OpinionMap = Record<string, Opinion>;
+type OpinionMap = Record<string, Opinion | null>;
 export function Suggestions() {
   const [suggestions, setSuggestions] = useState<MovieWithRawInfo[]>([]);
   const [checked, setChecked] = useState<OpinionMap>({});
@@ -34,7 +34,7 @@ export function Suggestions() {
           key={movie.href}
           movie={movie}
           opinion={checked[movie.href]}
-          setChecked={(href: string, opinion: Opinion) =>
+          setChecked={(href: string, opinion: Opinion | null) =>
             setChecked((checked) => ({
               ...checked,
               [href]: opinion,
@@ -52,7 +52,7 @@ function Suggestion({
   movie,
 }: {
   movie: MovieWithRawInfo;
-  opinion?: Opinion;
+  opinion?: Opinion | null;
   setChecked: (href: string, opinion: Opinion | null) => void;
 }) {
   return (
