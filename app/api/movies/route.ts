@@ -14,7 +14,10 @@ export async function GET() {
     return [movie.name, href];
   });
 
-  fs.writeFile("./data/sortedMovieNames.json", JSON.stringify(names));
+  fs.writeFile(
+    path.resolve("./public", "data/sortedMovieNames.json"),
+    JSON.stringify(names)
+  );
 
   return Response.json({ data: hrefs.length });
 }
