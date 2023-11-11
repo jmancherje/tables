@@ -55,15 +55,11 @@ function Suggestion({
   opinion?: Opinion | null;
   setChecked: (href: string, opinion: Opinion | null) => void;
 }) {
+  const image = movie.thumbnail || movie.images[0];
   return (
     <div>
-      {movie.images ? (
-        <Image
-          src={movie.images[0]}
-          height={100}
-          width={100}
-          alt={movie.name}
-        />
+      {image ? (
+        <Image src={image} height={100} width={100} alt={movie.name} />
       ) : null}
       <p>{movie.name}</p>
       <a target="_blank" href={`http://rottentomatoes.com${movie.href}`}>

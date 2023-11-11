@@ -7,11 +7,17 @@ export async function GET() {
   const rawFrequencies = await fs.readFile(
     path.resolve("./public", "data/frequencies.json")
   );
-  const data = await fs.readFile(
+  const rawMovies = await fs.readFile(
     path.resolve("./public", "data/moviesByHref.json")
   );
+  const rawMoviesWithThumbnails = await fs.readFile(
+    path.resolve("./public", "data/moviesByHrefWithThumbnail.json")
+  );
 
-  const moviesByHref = JSON.parse(data.toString());
+  const moviesByHref = JSON.parse(rawMovies.toString());
+  const moviesByHrefWithThumbnail = JSON.parse(
+    rawMoviesWithThumbnails.toString()
+  );
 
   const frequencies: Frequency[] = JSON.parse(rawFrequencies.toString());
   const top100 = frequencies.slice(0, 1000);
@@ -32,7 +38,17 @@ export async function GET() {
     weightedIndices = weightedIndices.filter((idx) => idx !== movieIndex);
   }
 
-  const movies = suggestions.map((suggestion) => moviesByHref[suggestion[0]]);
+  const movies = suggestions.map((suggestion) => {
+    const movieWithThumbnail = moviesByHrefWithThumbnail[suggestion[0]];
+    const movieWithout = moviesByHref[suggestion[0]];
+    if (!movieWithThumbnail) {
+      return {
+        ...movieWithout,
+        thumbnail: null,
+      };
+    }
+    return movieWithThumbnail;
+  });
 
   return Response.json({ suggestions: movies });
 }
