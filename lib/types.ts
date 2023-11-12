@@ -23,6 +23,7 @@ declare interface BaseMovie {
 declare interface MovieWithRawInfo extends BaseMovie {
   rawMovieInfo: RawMovieInfo; // Can be used later
   images: string[];
+  thumbnail: string | null;
   synopsis: string;
 }
 
