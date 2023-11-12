@@ -1,5 +1,6 @@
 "use client";
 
+import { CSSProperties } from "react";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import IconButton from "@mui/material/IconButton";
 
@@ -13,14 +14,11 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Divider,
-  Fab,
   Stack,
   Typography,
 } from "@mui/material";
 import { ProgressTab } from "../progress/ProgressTab";
 import { useMovieState } from "@/lib/state/userOpinion";
-import { CSSProperties } from "react";
 import { useIsSsr } from "@/lib/utils/useIsSsr";
 
 export function Suggestions({
@@ -36,7 +34,7 @@ export function Suggestions({
           itemData={suggestions}
           height={innerHeight}
           width="100%"
-          itemSize={297} // Row size + 1px divider
+          itemSize={296}
           itemCount={250}
           overscanCount={5}
         >
@@ -70,15 +68,21 @@ function Suggestion({
   style: CSSProperties;
 }) {
   const image = movie.thumbnail || movie.images[0];
+  const { liked } = useMovieState(movie.href);
   return (
     <Card
       sx={{
         maxWidth: ["100%", "450px"],
         display: "flex",
         height: 296,
+        position: "relative",
+        borderRadius: 0,
+        borderBottom: "0.5px solid",
+        borderBottomColor: "#a4a4a4",
         ...style,
       }}
     >
+      {typeof liked === "boolean" && <SuggestionOverlay liked={liked} />}
       <CardMedia
         component="img"
         sx={{ width: 201 }}
@@ -101,6 +105,23 @@ function Suggestion({
         <CardButtons href={movie.href} />
       </Box>
     </Card>
+  );
+}
+
+function SuggestionOverlay({ liked }: { liked: boolean }) {
+  return (
+    <Box
+      style={{
+        pointerEvents: "none",
+        position: "absolute",
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: liked ? "green" : "red",
+        opacity: 0.2,
+      }}
+    />
   );
 }
 
