@@ -28,7 +28,7 @@ export function ProgressTab({ threshold = 5 }: { threshold?: number }) {
       <LinearProgress
         variant="determinate"
         color={getColor(value)}
-        value={Math.floor((total / threshold) * 100)}
+        value={total >= threshold ? 100 : Math.floor((total / threshold) * 100)}
       />
       <Divider />
     </Box>

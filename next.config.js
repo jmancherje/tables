@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "resizing.flixster.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.fandango.com",
+      },
     ],
   },
 };

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties } from "react";
+import { FixedSizeList, ListChildComponentProps } from "react-window";
 import IconButton from "@mui/material/IconButton";
 
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import SearchIcon from "@mui/icons-material/Search";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
@@ -14,65 +14,78 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Divider,
-  Fab,
   Stack,
   Typography,
 } from "@mui/material";
 import { ProgressTab } from "../progress/ProgressTab";
 import { useMovieState } from "@/lib/state/userOpinion";
+import { useIsSsr } from "@/lib/utils/useIsSsr";
 
-async function getSuggestions(): Promise<{ suggestions: MovieWithRawInfo[] }> {
-  const res = await fetch("/api/movieSuggestions");
-  return await res.json();
-}
-
-export function Suggestions() {
-  const [suggestions, setSuggestions] = useState<MovieWithRawInfo[]>([]);
-
-  const fetched = useRef(false);
-  useEffect(() => {
-    if (fetched.current) {
-      return;
-    }
-    fetched.current = true;
-    async function fetchSuggestions() {
-      const res = await getSuggestions();
-      setSuggestions(res.suggestions);
-    }
-
-    fetchSuggestions();
-  }, []);
-
+export function Suggestions({
+  suggestions,
+}: {
+  suggestions: MovieWithRawInfo[];
+}) {
+  const innerHeight = useInnerHeight();
   return (
     <Box sx={{ mt: "8vh" }}>
       <Stack direction="column">
-        {suggestions.slice(0, 20).map((movie) => (
-          <>
-            <Suggestion key={movie.href} movie={movie} />
-            <Divider />
-          </>
-        ))}
+        <FixedSizeList<MovieWithRawInfo[]>
+          itemData={suggestions}
+          height={innerHeight}
+          width="100%"
+          itemSize={296}
+          itemCount={250}
+          overscanCount={5}
+        >
+          {renderRow}
+        </FixedSizeList>
       </Stack>
-      <Fab
-        color="primary"
-        aria-label="add"
-        sx={{ position: "fixed", bottom: "20px", right: "20px" }}
-      >
-        <SearchIcon />
-      </Fab>
       <ProgressTab />
     </Box>
   );
 }
 
-function Suggestion({ movie }: { movie: MovieWithRawInfo }) {
+function useInnerHeight(fallback: number = 1000): number {
+  const { isServer } = useIsSsr();
+  if (isServer) {
+    return fallback;
+  }
+  return window.innerHeight;
+}
+
+function renderRow(props: ListChildComponentProps<MovieWithRawInfo[]>) {
+  const movie = props.data[props.index];
+  const style = props.style;
+  return <Suggestion movie={movie} style={style} />;
+}
+
+function Suggestion({
+  movie,
+  style,
+}: {
+  movie: MovieWithRawInfo;
+  style: CSSProperties;
+}) {
   const image = movie.thumbnail || movie.images[0];
+  const { liked } = useMovieState(movie.href);
   return (
-    <Card sx={{ maxWidth: ["100%", "450px"], display: "flex" }}>
+    <Card
+      sx={{
+        maxWidth: ["100%", "450px"],
+        display: "flex",
+        height: 296,
+        position: "relative",
+        borderRadius: 0,
+        borderBottom: "0.5px solid",
+        borderBottomColor: "#a4a4a4",
+        ...style,
+      }}
+    >
+      {typeof liked === "boolean" && <SuggestionOverlay liked={liked} />}
       <CardMedia
         component="img"
-        sx={{ width: 200 }}
+        sx={{ width: 201 }}
         image={image}
         alt={movie.name}
       />
@@ -92,6 +105,23 @@ function Suggestion({ movie }: { movie: MovieWithRawInfo }) {
         <CardButtons href={movie.href} />
       </Box>
     </Card>
+  );
+}
+
+function SuggestionOverlay({ liked }: { liked: boolean }) {
+  return (
+    <Box
+      style={{
+        pointerEvents: "none",
+        position: "absolute",
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: liked ? "green" : "red",
+        opacity: 0.2,
+      }}
+    />
   );
 }
 
