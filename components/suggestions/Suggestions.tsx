@@ -21,18 +21,20 @@ import {
 import { ProgressTab } from "../progress/ProgressTab";
 import { useMovieState } from "@/lib/state/userOpinion";
 import { CSSProperties } from "react";
+import { useIsSsr } from "@/lib/utils/useIsSsr";
 
 export function Suggestions({
   suggestions,
 }: {
   suggestions: MovieWithRawInfo[];
 }) {
+  const innerHeight = useInnerHeight();
   return (
     <Box sx={{ mt: "8vh" }}>
       <Stack direction="column">
         <FixedSizeList<MovieWithRawInfo[]>
           itemData={suggestions}
-          height={window?.innerHeight || 1000} // must be number for vertical list
+          height={innerHeight}
           width="100%"
           itemSize={297} // Row size + 1px divider
           itemCount={250}
@@ -44,6 +46,14 @@ export function Suggestions({
       <ProgressTab />
     </Box>
   );
+}
+
+function useInnerHeight(fallback: number = 1000): number {
+  const { isServer } = useIsSsr();
+  if (isServer) {
+    return fallback;
+  }
+  return window.innerHeight;
 }
 
 function renderRow(props: ListChildComponentProps<MovieWithRawInfo[]>) {
