@@ -6,10 +6,10 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import { totalSelections } from "@/lib/state/userOpinion";
 
-export function ProgressTab({ threshold = 5 }: { threshold?: number }) {
+export function ProgressTab({ threshold = 15 }: { threshold?: number }) {
   const total = useRecoilValue(totalSelections);
 
-  const value = Math.floor((total / threshold) * 100);
+  const percentage = Math.floor((total / threshold) * 100);
   return (
     <Box
       sx={{
@@ -24,15 +24,35 @@ export function ProgressTab({ threshold = 5 }: { threshold?: number }) {
         borderBottomStyle: "solid",
       }}
     >
-      <Typography variant="body1">Rate more movies</Typography>
+      <Typography variant="body1">{getText(percentage)}</Typography>
       <LinearProgress
         variant="determinate"
-        color={getColor(value)}
-        value={total >= threshold ? 100 : Math.floor((total / threshold) * 100)}
+        color={getColor(percentage)}
+        value={total >= threshold ? 100 : percentage}
       />
       <Divider />
     </Box>
   );
+}
+
+function getText(percentage: number) {
+  if (percentage === 0) {
+    return "Start rating movies";
+  }
+
+  if (percentage < 50) {
+    return "Rate some more movies";
+  }
+
+  if (percentage < 80) {
+    return "Good progress";
+  }
+
+  if (percentage < 100) {
+    return "Just a few more";
+  }
+
+  return "Nice work";
 }
 
 function getColor(
